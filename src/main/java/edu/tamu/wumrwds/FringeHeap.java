@@ -41,7 +41,8 @@ public class FringeHeap {
         fringeHeap.insert(new Fringe(i++, 17));
         fringeHeap.insert(new Fringe(i++, 7));
 
-        fringeHeap.delete(1);
+        fringeHeap.insert(new Fringe(0, 1000));
+        fringeHeap.delete(0);
 
         fringeHeap.insert(new Fringe(i++, 5));
         fringeHeap.insert(new Fringe(i++, 11));
@@ -53,6 +54,9 @@ public class FringeHeap {
         fringeHeap.insert(new Fringe(i++, 131));
 
         fringeHeap.delete(5);
+
+        fringeHeap.insert(new Fringe(i++, 0));
+
 
         while (!fringeHeap.isEmpty()) {
             Fringe fringe = fringeHeap.extractMax();
@@ -135,7 +139,7 @@ public class FringeHeap {
     }
 
     private void bottomUpHeapify(int i) {
-        while (i > 0 && heap.get(parent(i)).compareTo(heap.get(i)) < 0) {
+        while (i > 0 && i < size() && heap.get(parent(i)).compareTo(heap.get(i)) < 0) {
             swap(parent(i), i);
             i = parent(i);
         }
