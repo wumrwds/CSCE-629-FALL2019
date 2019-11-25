@@ -1,16 +1,17 @@
 package edu.tamu.wumrwds.commons;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class Heap {
+public class Heap<T extends Comparable<T>> {
 
-    private List<Integer> heap;
+    private List<T> heap;
 
-    public Heap(int[] elements) {
-        heap = new ArrayList<>(elements.length);
-        for (int i = 0; i < elements.length; i++) {
-            heap.add(elements[i]);
+    public Heap(List<T> elements) {
+        heap = new ArrayList<>(elements.size());
+        for (int i = 0; i < elements.size(); i++) {
+            heap.add(elements.get(i));
         }
 
         constructHeap();
@@ -18,12 +19,11 @@ public class Heap {
 
 
     public static void main(String[] args) {
-        int[] elements = new int[]{3, 7, 9, 8, 10, 2, 14, 1, 16, 4};
-        Heap heap = new Heap(elements);
+        Heap heap = new Heap(Arrays.asList(3, 7, 9, 8, 10, 2, 14, 1, 16, 4));
         System.out.println(heap);
 
         heap.insert(6);
-        heap.insert(-1);
+        heap.insert(1);
         heap.insert(23);
         heap.insert(4);
         heap.insert(17);
@@ -52,15 +52,15 @@ public class Heap {
         return heap.size() == 0;
     }
 
-    public int maximum() {
+    public T maximum() {
         return heap.get(0);
     }
 
-    public void insert(int element) {
+    public void insert(T element) {
         heap.add(element);
         int i = size() - 1;
 
-        while (heap.get(parent(i)) < heap.get(i) && i > 0) {
+        while (heap.get(parent(i)).compareTo(heap.get(i)) < 0 && i > 0) {
             swap(parent(i), i);
             i = parent(i);
         }
@@ -92,14 +92,14 @@ public class Heap {
         int r = right(i);
 
         int largest;
-        if (l < size() && heap.get(l) > heap.get(i)) {
+        if (l < size() && heap.get(l).compareTo(heap.get(i)) > 0)  {
             largest = l;
         }
         else {
             largest = i;
         }
 
-        if (r < size() && heap.get(r) > heap.get(largest)) {
+        if (r < size() && heap.get(r).compareTo(heap.get(largest)) > 0) {
             largest = r;
         }
 
@@ -110,7 +110,7 @@ public class Heap {
     }
 
     private void swap(int i, int j) {
-        int tmp = heap.get(i);
+        T tmp = heap.get(i);
         heap.set(i, heap.get(j));
         heap.set(j, tmp);
     }
