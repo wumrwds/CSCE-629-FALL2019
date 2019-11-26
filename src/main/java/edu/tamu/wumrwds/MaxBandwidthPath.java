@@ -1,264 +1,107 @@
 package edu.tamu.wumrwds;
 
-import edu.tamu.wumrwds.entity.*;
+import edu.tamu.wumrwds.entity.Graph;
+import edu.tamu.wumrwds.entity.MaximumBandwidthResult;
+import edu.tamu.wumrwds.entity.Vertex;
 import edu.tamu.wumrwds.util.GraphUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.sql.Timestamp;
 
 public class MaxBandwidthPath {
-    private static final int UNSEEN = 0;
-    private static final int FRINGE = 1;
-    private static final int INTREE = 2;
 
-    private static MaximumBandwidthResult dijkstraNotUsingHeap(Graph graph, Vertex s, Vertex t) {
-        int n = graph.vertexSize();
+    private static final Logger logger = LoggerFactory.getLogger(MaxBandwidthPath.class);
 
-        // define status, wt & dad
-        int[] status = new int[n];
-        int[] wt = new int[n];
-        int[] dad = new int[n];
+    public static void runMbp(Graph graph, int vertexId1, int vertextId2) {
 
-        // set source vertex's status to INTREE
-        status[s.getId()] = INTREE;
+        logger.info("================================ Start to run 3 algorithms on the given graph ================================\n");
 
-        //
-        List<int[]> fringes = new ArrayList<>();
-        for (Vertex w : s.getNeighbors()) {
-            status[w.getId()] = FRINGE;
-            fringes.add(new int[]{w.getId(), graph.getWeight(s, w)});
-            wt[w.getId()] = graph.getWeight(s, w);
-            dad[w.getId()] = s.getId();
-        }
+        Vertex s = graph.getVertxById(vertexId1);
+        Vertex t = graph.getVertxById(vertextId2);
 
-        while (!fringes.isEmpty()) {
-            int[] bestFringe = extractMax(fringes);
-            Vertex v = graph.getVertxById(bestFringe[0]);
-            status[v.getId()] = INTREE;
-
-            for (Vertex w : v.getNeighbors()) {
-                int weight = graph.getWeight(v, w);
-
-                if (status[w.getId()] == UNSEEN) {
-                    status[w.getId()] = FRINGE;
-                    dad[w.getId()] = v.getId();
-                    wt[w.getId()] = Math.min(weight, wt[v.getId()]);
-                    fringes.add(new int[]{w.getId(), weight});
-                } else if (status[w.getId()] == FRINGE && wt[w.getId()] < Math.min(weight, wt[v.getId()])) {
-                    dad[w.getId()] = v.getId();
-                    wt[w.getId()] = Math.min(weight, wt[v.getId()]);
-                    update(fringes, w.getId(), wt[w.getId()]);
-                }
-            }
-        }
-
-        return new MaximumBandwidthResult(s.getId(), t.getId(), dad, wt[t.getId()]);
-    }
-
-    private static MaximumBandwidthResult dijkstraUsingHeap(Graph graph, Vertex s, Vertex t) {
-        int n = graph.vertexSize();
-
-        // define status, wt & dad
-        int[] status = new int[n];
-        int[] wt = new int[n];
-        int[] dad = new int[n];
-
-        // set source vertex's status to INTREE
-        status[s.getId()] = INTREE;
-
-        // get the initial fringes and use them to construct a heap
-        List<Fringe> fringes = new LinkedList<>();
-        for (Vertex w : s.getNeighbors()) {
-            status[w.getId()] = FRINGE;
-            fringes.add(new Fringe(w.getId(), graph.getWeight(s, w)));
-            wt[w.getId()] = graph.getWeight(s, w);
-            dad[w.getId()] = s.getId();
-        }
-        FringeHeap maxFringeHeap = new FringeHeap(fringes);
+        logger.info("# of edges: m = {}", graph.edgeSize());
+        logger.info("# of vertices: n = {}", graph.vertexSize());
+        logger.info("Average degree: average = {}", graph.averageDegree());
 
 
-        while (!maxFringeHeap.isEmpty()) {
-            // extract the maximum fringe vertex
-            Fringe bestFringe = maxFringeHeap.extractMax();
-            Vertex v = graph.getVertxById(bestFringe.getVertex());
-            status[v.getId()] = INTREE;
-
-            for (Vertex w : v.getNeighbors()) {
-                int weight = graph.getWeight(v, w);
-
-                if (status[w.getId()] == UNSEEN) {
-                    status[w.getId()] = FRINGE;
-                    dad[w.getId()] = v.getId();
-                    wt[w.getId()] = Math.min(weight, wt[v.getId()]);
-                    maxFringeHeap.insert(new Fringe(w.getId(), weight));
-                } else if (status[w.getId()] == FRINGE && wt[w.getId()] < Math.min(weight, wt[v.getId()])) {
-                    maxFringeHeap.delete(w.getId());
-                    dad[w.getId()] = v.getId();
-                    wt[w.getId()] = Math.min(weight, wt[v.getId()]);
-                    maxFringeHeap.insert(new Fringe(w.getId(), wt[w.getId()]));
-                }
-            }
-        }
-
-        return new MaximumBandwidthResult(s.getId(), t.getId(), dad, wt[t.getId()]);
-    }
-
-    public static MaximumBandwidthResult kruskalUsingDisjointSet(Graph graph, Vertex s, Vertex t) {
-        // generate max spanning tree
-        Map<Integer, List<int[]>> maxSpanningTree = genMaxSpanningTree(graph);
-
-        // find a unique path from s to v
-        boolean[] isVisited = new boolean[graph.vertexSize()];
-
-        // dfs
-        MaximumBandwidthResult result = new MaximumBandwidthResult(s.getId(), t.getId(), Collections.emptyList(), 0);
-        ArrayList<Integer> curPath = new ArrayList<>();
-        curPath.add(s.getId());
-        dfs(maxSpanningTree, isVisited, s.getId(), t.getId(), curPath, Integer.MAX_VALUE, result);
-
-        return result;
-    }
+        logger.info("\n\n\n\n\n");
 
 
-    private static Map<Integer, List<int[]>> genMaxSpanningTree(Graph graph) {
-        int m = graph.edgeSize();
-        int n = graph.vertexSize();
-        List<Edge> edges = graph.getEdges();
+        long start, end;
+        logger.info("================================ Dijkstra's without heap starts ================================\n");
 
-        // sort all edges in descending order
-        Collections.sort(edges, (e1, e2) -> (e2.getWeight() - e1.getWeight()));
+        start = System.currentTimeMillis();
+        logger.info("Start to run Dijkstra's without heap on the graph: startTime = {}", new Timestamp(start));
 
-        // make disjoint set
-        DisjointSet disjointSet = new DisjointSet(n);
+        MaximumBandwidthResult maxBandwidthWithoutHeap = DijkstraMbpWithoutHeap.dijkstraNotUsingHeap(graph, s, t);
 
-        Map<Integer, List<int[]>> maxSpanningTree = new HashMap<>(n);
-        for (int i = 0; i < n; i++) {
-            maxSpanningTree.put(i, new LinkedList<>());
-        }
+        end = System.currentTimeMillis();
+        logger.info("Finish running Dijkstra's without heap on the graph: finishTime = {}", new Timestamp(end));
+        logger.info("Total time cost: cost = {} milliseconds", end - start);
 
-        for (Edge edge : edges) {
+        logger.info("Maximum Bandwidth Path: path = {}", maxBandwidthWithoutHeap.printPath());
+        logger.info("Maximum Bandwidth: bandwidth = {}\n", maxBandwidthWithoutHeap.getMaximumBandwidth());
 
-            Vertex v1 = edge.getV1();
-            Vertex v2 = edge.getV2();
-
-            int r1 = disjointSet.findSet(v1.getId());
-            int r2 = disjointSet.findSet(v2.getId());
-
-            if (r1 != r2) {
-                disjointSet.union(v1.getId(), v2.getId());
-
-                maxSpanningTree.get(v1.getId()).add(new int[]{v2.getId(), edge.getWeight()});
-                maxSpanningTree.get(v2.getId()).add(new int[]{v1.getId(), edge.getWeight()});
-            }
-        }
-
-        return maxSpanningTree;
-    }
+        logger.info("================================ Dijkstra's without heap ends ================================\n");
 
 
-    private static void dfs(Map<Integer, List<int[]>> maxSpanningTree, boolean[] isVisited, int cur, int end,
-                            List<Integer> curPath, int maxBandwidth, MaximumBandwidthResult result) {
 
-        if (result.isCompleted()) {
-            return;
-        }
-
-        if (cur == end) {
-            result.setPath(new ArrayList<>(curPath));
-            result.setMaximumBandwidth(maxBandwidth);
-            return;
-        }
-
-        isVisited[cur] = true;
-
-        List<int[]> neighbors = maxSpanningTree.get(cur);
-        for (int[] neighbor : neighbors) {
+        logger.info("\n\n\n\n\n");
 
 
-            if (!isVisited[neighbor[0]]) {
-                curPath.add(neighbor[0]);
-                dfs(maxSpanningTree, isVisited, neighbor[0], end, curPath, Math.min(maxBandwidth, neighbor[1]), result);
-                curPath.remove(curPath.size() - 1);
-            }
-        }
-    }
+
+        logger.info("================================ Dijkstra's with heap starts ================================\n");
+
+        start = System.currentTimeMillis();
+        logger.info("Start to run Dijkstra's with heap on the graph: startTime = {}", new Timestamp(start));
+
+        MaximumBandwidthResult maxBandwidthWithHeap = DijkstraMbpWithHeap.dijkstraUsingHeap(graph, s, t);
+
+        end = System.currentTimeMillis();
+        logger.info("Finish running Dijkstra's with heap on the graph: finishTime = {}", new Timestamp(end));
+        logger.info("Total time cost: cost = {} milliseconds", end - start);
+
+        logger.info("Maximum Bandwidth Path: path = {}", maxBandwidthWithHeap.printPath());
+        logger.info("Maximum Bandwidth: bandwidth = {}\n", maxBandwidthWithHeap.getMaximumBandwidth());
+
+        logger.info("================================ Dijkstra's with heap ends ================================\n");
 
 
-    private static int[] extractMax(List<int[]> fringes) {
-        int[] max = new int[]{-1, -1};
-        int maxIdx = -1;
-        for (int i = 0; i < fringes.size(); i++) {
-            if (max[1] < fringes.get(i)[1]) {
-                max[0] = fringes.get(i)[0];
-                max[1] = fringes.get(i)[1];
-                maxIdx = i;
-            }
-        }
 
-        // remove the best fringe
-        fringes.remove(maxIdx);
 
-        return max;
-    }
+        logger.info("\n\n\n\n\n");
 
-    private static void update(List<int[]> fringes, int vertexId, int updatedWt) {
-        for (int[] fringe : fringes) {
-            if (vertexId == fringe[0]) {
-                fringe[1] = updatedWt;
-                return;
-            }
-        }
+
+
+
+        logger.info("================================ Kruskal's MST starts ================================\n");
+
+        start = System.currentTimeMillis();
+        logger.info("Start to run Kruskal’s on the graph: startTime = {}", new Timestamp(start));
+
+        MaximumBandwidthResult maxBandwidthWithMst = KruskalMbp.kruskalUsingDisjointSet(graph, s, t);
+
+        end = System.currentTimeMillis();
+        logger.info("Finish running Kruskal’s on the graph: finishTime = {}", new Timestamp(end));
+        logger.info("Total time cost: cost = {} milliseconds", end - start);
+
+        logger.info("Maximum Bandwidth Path: path = {}", maxBandwidthWithMst.printPath());
+        logger.info("Maximum Bandwidth: bandwidth = {}\n", maxBandwidthWithMst.getMaximumBandwidth());
+
+        logger.info("================================ Kruskal's MST ends ================================\n");
+
     }
 
     public static void main(String[] args) {
         Graph g1 = GraphUtil.genGraphWithAverageDegree(5000, 6);
-        Vertex s = g1.getVertxById(0);
-        Vertex t = g1.getVertxById(4999);
-
-        System.out.println("m = " + g1.edgeSize());
-        System.out.println("n = " + g1.vertexSize());
-//
-        MaximumBandwidthResult maxBandwidthWithoutHeap = dijkstraNotUsingHeap(g1, s, t);
-        MaximumBandwidthResult maxBandwidthWithHeap = dijkstraUsingHeap(g1, s, t);
-        MaximumBandwidthResult maxBandwidthWithMST = kruskalUsingDisjointSet(g1, s, t);
-//
-        System.out.println(maxBandwidthWithoutHeap.printPath());
-        System.out.println(maxBandwidthWithoutHeap.getMaximumBandwidth());
-
-        System.out.println("===========");
-
-        System.out.println(maxBandwidthWithHeap.printPath());
-        System.out.println(maxBandwidthWithHeap.getMaximumBandwidth());
-//
-        System.out.println("===========");
-
-        System.out.println(maxBandwidthWithMST.printPath());
-        System.out.println(maxBandwidthWithMST.getMaximumBandwidth());
+        runMbp(g1, 0, 4999);
 
 
-        System.out.println("\n++++++++++++++++\n");
+        logger.info("\n\n\n\n\n");
+
 
         Graph g2 = GraphUtil.genGraphWithSpecificAmountOfNeighbors(5000, 0.2, 0.01);
-        Vertex s2 = g2.getVertxById(0);
-        Vertex t2 = g2.getVertxById(4999);
-
-        System.out.println("m = " + g2.edgeSize());
-        System.out.println("n = " + g2.vertexSize());
-
-        MaximumBandwidthResult maxBandwidthWithoutHeap2 = dijkstraNotUsingHeap(g2, s2, t2);
-        MaximumBandwidthResult maxBandwidthWithHeap2 = dijkstraUsingHeap(g2, s2, t2);
-        MaximumBandwidthResult maxBandwidthWithMST2 = kruskalUsingDisjointSet(g2, s2, t2);
-
-        System.out.println(maxBandwidthWithoutHeap2.printPath());
-        System.out.println(maxBandwidthWithoutHeap2.getMaximumBandwidth());
-
-        System.out.println("===========");
-
-        System.out.println(maxBandwidthWithHeap2.printPath());
-        System.out.println(maxBandwidthWithHeap2.getMaximumBandwidth());
-
-        System.out.println("===========");
-
-        System.out.println(maxBandwidthWithMST2.printPath());
-        System.out.println(maxBandwidthWithMST2.getMaximumBandwidth());
+        runMbp(g2, 0, 4999);
     }
 }

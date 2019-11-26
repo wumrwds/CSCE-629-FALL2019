@@ -75,8 +75,6 @@ public class GraphUtil {
             degreeDistribution[i] = randomIntBetween(-halfRange, halfRange) + averageDegree;
         }
 
-        System.out.println(Arrays.toString(degreeDistribution));
-
         // connect all vertices to avoid the unconnected case
         boolean[][] isExisted = new boolean[size][size];
         int[] degrees = new int[size];
