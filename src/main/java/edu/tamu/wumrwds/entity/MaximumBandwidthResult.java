@@ -12,6 +12,13 @@ public class MaximumBandwidthResult {
     private List<Integer> path;
     private int maximumBandwidth;
 
+    public MaximumBandwidthResult(int from, int to, List<Integer> path, int maximumBandwidth) {
+        this.from = from;
+        this.to = to;
+        this.path = path;
+        this.maximumBandwidth = maximumBandwidth;
+    }
+
     public MaximumBandwidthResult(int from, int to, int[] dad, int maximumBandwidth) {
         this.from = from;
         this.to = to;
@@ -30,8 +37,16 @@ public class MaximumBandwidthResult {
         Collections.reverse(path);
     }
 
+    public boolean isCompleted() {
+        return path != null && path.size() != 0;
+    }
+
     public List<Integer> getPath() {
         return path;
+    }
+
+    public void setPath(List<Integer> path) {
+        this.path = path;
     }
 
     public String printPath() {

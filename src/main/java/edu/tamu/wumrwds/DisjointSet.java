@@ -2,8 +2,8 @@ package edu.tamu.wumrwds;
 
 public class DisjointSet {
 
-    private int[] ranks;
-    private int[] parents;
+    private int[] rank;
+    private int[] dad;
 
     /**
      * Makes sets.
@@ -11,12 +11,12 @@ public class DisjointSet {
      * @param n
      */
     DisjointSet(int n) {
-        ranks = new int[n];
-        parents = new int[n];
+        rank = new int[n];
+        dad = new int[n];
 
         for (int i = 0; i < n; i++) {
-            ranks[i] = 1;
-            parents[i] = i;
+            rank[i] = 1;
+            dad[i] = i;
         }
     }
 
@@ -26,11 +26,11 @@ public class DisjointSet {
      * @param x
      * @return
      */
-    private int findSet(int x) {
-        if (parents[x] != x) {
-            parents[x] = findSet(parents[x]);
+    public int findSet(int x) {
+        if (dad[x] != x) {
+            dad[x] = findSet(dad[x]);
         }
-        return parents[x];
+        return dad[x];
     }
 
     /**
@@ -40,24 +40,47 @@ public class DisjointSet {
      * @param p2
      */
     private void link(int p1, int p2) {
-        if (ranks[p1] < ranks[p2]) {
+        if (rank[p1] < rank[p2]) {
             // set1 is less than set2
             // make p2 the parent(root) of p1
-            parents[p1] = p2;
+            dad[p1] = p2;
         } else {
             // set1 is larger than set2
             // make p1 the parent(root) of p2
-            parents[p2] = p1;
+            dad[p2] = p1;
 
             // set1 is as the same rank as set2
             // increase the rank of the root p1
-            if (ranks[p1] == ranks[p2]) {
-                ranks[p1]++;
+            if (rank[p1] == rank[p2]) {
+                rank[p1]++;
             }
         }
     }
 
     public void union(int x, int y) {
         link(findSet(x), findSet(y));
+    }
+
+
+    public static void main(String[] args) {
+
+        DisjointSet set = new DisjointSet(10);
+
+        set.union(1, 2);
+        set.union(2, 3);
+        set.union(4, 7);
+        set.union(5, 6);
+        set.union(8, 7);
+
+        System.out.println(set.findSet(0));
+        System.out.println(set.findSet(1));
+        System.out.println(set.findSet(2));
+        System.out.println(set.findSet(3));
+        System.out.println(set.findSet(4));
+        System.out.println(set.findSet(5));
+        System.out.println(set.findSet(6));
+        System.out.println(set.findSet(7));
+        System.out.println(set.findSet(8));
+        System.out.println(set.findSet(9));
     }
 }
