@@ -10,7 +10,7 @@ public class DisjointSet {
      *
      * @param n
      */
-    DisjointSet(int n) {
+    public DisjointSet(int n) {
         rank = new int[n];
         dad = new int[n];
 
