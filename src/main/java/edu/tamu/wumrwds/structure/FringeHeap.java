@@ -1,4 +1,4 @@
-package edu.tamu.wumrwds;
+package edu.tamu.wumrwds.structure;
 
 import edu.tamu.wumrwds.entity.Fringe;
 

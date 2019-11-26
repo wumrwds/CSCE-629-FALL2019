@@ -4,6 +4,7 @@ import edu.tamu.wumrwds.entity.Edge;
 import edu.tamu.wumrwds.entity.Graph;
 import edu.tamu.wumrwds.entity.MaximumBandwidthResult;
 import edu.tamu.wumrwds.entity.Vertex;
+import edu.tamu.wumrwds.structure.DisjointSet;
 
 import java.util.*;
 

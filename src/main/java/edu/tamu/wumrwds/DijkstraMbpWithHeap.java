@@ -4,6 +4,7 @@ import edu.tamu.wumrwds.entity.Fringe;
 import edu.tamu.wumrwds.entity.Graph;
 import edu.tamu.wumrwds.entity.MaximumBandwidthResult;
 import edu.tamu.wumrwds.entity.Vertex;
+import edu.tamu.wumrwds.structure.FringeHeap;
 
 import java.util.LinkedList;
 import java.util.List;
