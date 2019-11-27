@@ -40,5 +40,5 @@ Once you run the application, both the console and the file `log.out` will outpu
 
 ### Report
 
-See the link: 
+See the link: https://github.com/wumrwds/CSCE-629-FALL2019/blob/master/report.md
 
