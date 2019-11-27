@@ -4,12 +4,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Vertex {
+    /** Vertex ID */
     private int id;
+
+    /** Neighbors */
     private List<Vertex> neighbors;
 
     public Vertex(int id) {
         this.id = id;
-        this.neighbors = new LinkedList<Vertex>();
+        this.neighbors = new LinkedList<>();
     }
 
     public Vertex(int id, List<Vertex> neighbors) {
@@ -41,7 +44,8 @@ public class Vertex {
     public String toString() {
         StringBuilder neighborStr = new StringBuilder();
         for (Vertex neighbor : neighbors) {
-            neighborStr.append(neighbor.getId() + ",");
+            neighborStr.append(neighbor.getId());
+            neighborStr.append(",");
         }
         neighborStr.deleteCharAt(neighborStr.length() - 1);
 

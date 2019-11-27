@@ -1,10 +1,13 @@
 package edu.tamu.wumrwds.entity;
 
 public class Edge {
+    /** Vertex 1 */
     private Vertex v1;
 
+    /** Vertex 2 */
     private Vertex v2;
 
+    /** Weight */
     private int weight;
 
     public Edge(Vertex v1, Vertex v2, int weight) {

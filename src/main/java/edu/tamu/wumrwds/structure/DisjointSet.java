@@ -2,8 +2,8 @@ package edu.tamu.wumrwds.structure;
 
 public class DisjointSet {
 
-    private int[] rank;
-    private int[] dad;
+    private final int[] rank;
+    private final int[] dad;
 
     /**
      * Makes sets.

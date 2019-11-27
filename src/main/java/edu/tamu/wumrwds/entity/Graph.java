@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Map;
 
 public class Graph {
-
+    /** Vertex Set */
     private List<Vertex> vertices;
 
+    /** Edge Set */
     private List<Edge> edges;
 
-    private Map<String, Edge> edgeDict;
+    /** Edge Dictionary */
+    private final Map<String, Edge> edgeDict;
 
     public Graph(List<Vertex> vertices, List<Edge> edges) {
         this.vertices = vertices;

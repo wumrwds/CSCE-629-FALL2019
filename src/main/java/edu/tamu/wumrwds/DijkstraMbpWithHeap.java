@@ -14,6 +14,10 @@ public class DijkstraMbpWithHeap {
     private static final int FRINGE = 1;
     private static final int INTREE = 2;
 
+    private DijkstraMbpWithHeap() {
+        // private constructor
+    }
+
     public static MaximumBandwidthResult dijkstraUsingHeap(Graph graph, Vertex s, Vertex t) {
         int n = graph.vertexSize();
 

@@ -93,10 +93,14 @@ public class MaxBandwidthPath {
     }
 
     public static void main(String[] args) {
-        Graph g1 = GraphUtil.genGraphWithAverageDegree(5000, 6);
-        runMbp(g1, 5);
+        for (int i = 0; i < 5; i++) {
+            Graph g1 = GraphUtil.genGraphWithAverageDegree(5000, 6);
+            runMbp(g1, 5);
+        }
 
-        Graph g2 = GraphUtil.genGraphWithSpecificAmountOfNeighbors(5000, 0.2, 0.01);
-        runMbp(g2, 5);
+        for (int i = 0; i < 5; i++) {
+            Graph g2 = GraphUtil.genGraphWithSpecificAmountOfNeighbors(5000, 0.2, 0.01);
+            runMbp(g2, 5);
+        }
     }
 }

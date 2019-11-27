@@ -52,7 +52,8 @@ public class MaximumBandwidthResult {
     public String printPath() {
         StringBuilder sb = new StringBuilder("MaximumBandwidthPath = [");
         for (int i = 0; i < path.size(); i++) {
-            sb.append(path.get(i) + "->");
+            sb.append(path.get(i));
+            sb.append("->");
         }
 
         sb.delete(sb.length() - 2, sb.length());

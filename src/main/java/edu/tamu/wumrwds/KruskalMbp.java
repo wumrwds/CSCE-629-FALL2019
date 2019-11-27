@@ -10,6 +10,10 @@ import java.util.*;
 
 public class KruskalMbp {
 
+    private KruskalMbp() {
+        // private constructor
+    }
+
     public static MaximumBandwidthResult kruskalUsingDisjointSet(Graph graph, Vertex s, Vertex t) {
         // generate max spanning tree
         Map<Integer, List<int[]>> maxSpanningTree = genMaxSpanningTree(graph);
@@ -28,7 +32,6 @@ public class KruskalMbp {
 
 
     private static Map<Integer, List<int[]>> genMaxSpanningTree(Graph graph) {
-        int m = graph.edgeSize();
         int n = graph.vertexSize();
         List<Edge> edges = graph.getEdges();
 
@@ -80,8 +83,6 @@ public class KruskalMbp {
 
         List<int[]> neighbors = maxSpanningTree.get(cur);
         for (int[] neighbor : neighbors) {
-
-
             if (!isVisited[neighbor[0]]) {
                 curPath.add(neighbor[0]);
                 dfs(maxSpanningTree, isVisited, neighbor[0], end, curPath, Math.min(maxBandwidth, neighbor[1]), result);

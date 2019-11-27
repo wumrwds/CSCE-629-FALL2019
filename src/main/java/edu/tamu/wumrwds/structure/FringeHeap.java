@@ -6,11 +6,11 @@ import java.util.*;
 
 public class FringeHeap {
 
-    /** D  */
-    private List<Fringe> heap;
+    /** D */
+    private final List<Fringe> heap;
 
     /** H */
-    private Map<Integer, Integer> idxMap;
+    private final Map<Integer, Integer> idxMap;
 
     public FringeHeap(List<Fringe> elements) {
         heap = new ArrayList<>(elements.size());
@@ -55,7 +55,7 @@ public class FringeHeap {
 
         fringeHeap.delete(5);
 
-        fringeHeap.insert(new Fringe(i++, 0));
+        fringeHeap.insert(new Fringe(i, 0));
 
 
         while (!fringeHeap.isEmpty()) {

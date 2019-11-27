@@ -43,7 +43,7 @@ public class GraphUtil {
 
         // pick distinct pairs of vertices
         int extraEdgesAmount = (averageDegree - 2) * size / 2;
-        for (int i = 0; i < extraEdgesAmount; i++) {
+        for (int i = 0; i < extraEdgesAmount + 1; i++) {
             int[] pair = randomPickUniquePair(size, isExisted);
             addEdge(pair[0], pair[1], vertices, edges);
         }
@@ -78,10 +78,6 @@ public class GraphUtil {
         // connect all vertices to avoid the unconnected case
         boolean[][] isExisted = new boolean[size][size];
         int[] degrees = new int[size];
-        List<Integer> vertexSpace = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            vertexSpace.add(i);
-        }
         List<Edge> edges = new LinkedList<>();
         for (int i = 0; i < size - 1; i++) {
             addEdge(i, i+1, vertices, edges);
